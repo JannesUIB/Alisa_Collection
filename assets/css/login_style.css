@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap');
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: 'Roboto', sans-serif;
+}
+
+body {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+	background-color: #f0f8ff;
+}
+
+.wrapper {
+	width: 420px;
+	background-color:  #FFFFFF;
+	border: 2px solid rgba(255, 255, 255, .2);
+	backdrop-filter: blur(10px);
+	box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+	color: black;
+	border-radius: 10px;
+	padding: 30px 40px;
+}
+
+.wrapper h1 {
+	font-size: 36px;
+	text-align: center;
+}
+
+.wrapper .input-box {
+	width: 100%;
+	height: 50px;
+	margin: 30px 0;
+}
+
+.input-box input {
+	width: 100%;
+	height: 100%;
+	background: transparent;
+	border: none;
+	outline: none;
+	border: 2px solid rgba(129, 94, 94, 0.2);
+	border-radius: 40px;
+	font-size: 16px;
+	color: #0b0707;
+	padding: 20px 45px 20px 20px;
+	font-weight: 800;
+	transition: ease-in-out 0.3s;
+}
+
+.input-box input::placeholder{
+	color: #0b0707;
+	font-weight: 800;
+}
+
+.input-box input:hover {
+	box-shadow: 0px 0 15px #9999ff;
+}
+.input-box i {
+	position: absolute;
+	right: 20px;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 20px;
+}
+
+.wrapper .remember-forgot {
+	display: flex;
+	justify-content: space-between;
+	font-size: 14.5px;
+	margin: -15px 0 15px;
+}
+
+.remember-forgot label {
+	color: #0b0707 ;
+	margin-right: 3px;
+	font-weight: 800;
+}
+
+.remember-forgot a {
+	color: #0b0707;
+	text-decoration: none;
+	font-weight: 800;
+}
+
+.remember-forgot a:hover {
+	text-decoration: underline;
+}
+
+.wrapper .btn {
+	margin: 20px 80px 10px;
+	width: 50%;
+	height: 45px;
+	background: #fff;
+	border: none;
+	outline: none;
+	border-radius: 40px;
+	border: 2px solid rgba(129, 94, 94, 0.2);
+	cursor: pointer;
+	font-size: 16px;
+	color: #0000ff;
+	font-weight: 600;
+	
+	transition: linear 0.3s;
+}
+
+.wrapper .btn:hover {
+	
+	box-shadow: 0px 0 15px #9999ff;
+	
+	cursor: pointer;
+
+}
+
+.wrapper .register-link {
+	font-size: 14.5px;
+	text-align: center;
+	margin: 20px 0 15px;
+}
+
+.register-link p {
+	color: #0b0707;
+	text-decoration: none;
+	font-weight: 600;
+}
+
+.register-link p a:hover {
+	text-decoration: underline;
+}
