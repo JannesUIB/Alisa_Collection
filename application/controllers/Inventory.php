@@ -18,48 +18,99 @@ class Inventory extends CI_Controller {
 	 * map to /index.php/welcome/<method_name>
 	 * @see https://codeigniter.com/userguide3/general/urls.html
 	 */
+	public function __construct() {
+        parent::__construct();
+        $this->load->model('Inventory_model');
+    }
+
 	public function index()
 	{
-		$this->load->view('/inventory/index');
+		$inventories = $this->Inventory_model->GetInventory()->result();
+
+		$data['invetories'] = $inventories;
+		$this->load->view('/inventory/index', $data);
 	}
 
 	public function form()
 	{
 		$this->load->view('/inventory/form');
 	}
-	public function __construct() {
-        parent::__construct();
-        $this->load->model('Inventory_model');
+
+	public function formselectedid($id){
+		$record = $this->Inventory_model->GetInventoryBasedOnId($id)->result();
+
+		$data['record'] = $record;
+		$this->load->view('/inventory/formid', $data);
+	}
+
+    public function addInventory() {
+		$inventory_name = $this->input->post('inventory_name');
+		$inventory_category = $this->input->post('inventory_category');
+		$inventory_type = $this->input->post('inventory_type');
+		$inventory_internal_references = $this->input->post('inventory_internal_references');
+		$inventory_barcode = $this->input->post('inventory_barcode');
+		$inventory_price = $this->input->post('inventory_price');
+		$inventory_description = $this->input->post('inventory_description');
+		
+		$lastId = $this->Inventory_model->getLastInventoryId();
+		$id = ($lastId) ? $lastId + 1 : 1;
+
+		$data = array(
+			'id' => $id,
+			'Item_Name' => $inventory_name,
+			'Internal_Ref' => $inventory_internal_references,
+			'Barcode' => $inventory_barcode,
+			'Item_Category' => $inventory_category,
+			'Item_Type' => $inventory_type,
+			'Sales_Prices' => $inventory_price,
+			'description' => $inventory_description,
+		);
+
+		$this->Inventory_model->addInventory($data);
+		// Redirect or load view as needed
+		redirect('Inventory/formselectedid/'. $id);
+	}
+	
+	public function UpdateInventory($id) {
+		$inventory_name = $this->input->post('inventory_name');
+		$inventory_category = $this->input->post('inventory_category');
+		$inventory_type = $this->input->post('inventory_type');
+		$inventory_internal_references = $this->input->post('inventory_internal_references');
+		$inventory_barcode = $this->input->post('inventory_barcode');
+		$inventory_price = $this->input->post('inventory_price');
+		$inventory_description = $this->input->post('inventory_description');
+		
+		$data = array(
+			// 'id' => $id,
+			'Item_Name' => $inventory_name,
+			'Internal_Ref' => $inventory_internal_references,
+			'Barcode' => $inventory_barcode,
+			'Item_Category' => $inventory_category,
+			'Item_Type' => $inventory_type,
+			'Sales_Prices' => $inventory_price,
+			'description' => $inventory_description,
+		);
+
+		$this->Inventory_model->UpdateInventory($data, $id);
+		redirect('Inventory/formselectedid/'. $id);
     }
 
-    public function add() {
-        if ($this->input->post('button_add')) {
-            $inventory_name = $this->input->post('inventory_name');
-            $inventory_price = $this->input->post('inventory_price');
-            $inventory_stock = $this->input->post('inventory_stock');
-            $inventory_barcode = $this->input->post('inventory_barcode');
-            
-            $lastId = $this->Inventory_model->getLastInventoryId();
-            $id = ($lastId) ? $lastId + 1 : 1;
+    public function delete($id) {
+		$this->Inventory_model->deleteInventory($id);
 
-            $data = array(
-                'inventory_id' => $id,
-                'inventory_name' => $inventory_name,
-                'inventory_price' => $inventory_price,
-                'inventory_stock' => $inventory_stock,
-                'inventory_barcode' => $inventory_barcode
-            );
+		$inventories = $this->Inventory_model->GetInventory()->result();
 
-            $this->Inventory_model->addInventory($data);
-        }
+		$data['invetories'] = $inventories;
+		// $this->index();
+		redirect('Inventory/index');
         // Redirect or load view as needed
-    }
+	}
+	
+	public function edit($id) {
+		$record = $this->Inventory_model->GetInventoryBasedOnId($id)->result();
 
-    public function delete() {
-        if ($this->input->post('button_delete')) {
-            $inventory_name = $this->input->post('inventory_name');
-            $this->Inventory_model->deleteInventory($inventory_name);
-        }
+		$data['record'] = $record;
+		$this->load->view('/inventory/formid_edit', $data);
         // Redirect or load view as needed
     }
 }

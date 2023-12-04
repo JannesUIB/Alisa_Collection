@@ -40,6 +40,15 @@
 							<th>Customer</th>
 							<th>Sales Order Total</th>
 						</td>
+						<?php
+							foreach ($sales as $sale) {
+								echo "<tr>";
+								echo "<td>".$inventory->Name."</td>";
+								echo "<td>".$inventory->Customer_Name."</td>";
+								echo "<td>".$inventory->Sale_Total."</td>";
+								echo "</tr>";
+							}
+						?>
 						<tr>
 							<td />
 							<td />

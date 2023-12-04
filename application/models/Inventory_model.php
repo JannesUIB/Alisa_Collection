@@ -1,24 +1,57 @@
 <?php
-class User_model extends CI_Model {
+class Inventory_model extends CI_Model {
 
-        public function __construct()
-        {
-                $this->load->database();
+	public function __construct()
+	{
+		$this->inventory = $this->load->database('default', TRUE);
+		$this->load->helper('url');
 	}
 
 	public function addInventory($data) {
-        $this->db->insert('inventory', $data);
+		$this->inventory = $this->load->database('default', TRUE);
+
+        $this->inventory->insert('inventory', $data);
+	}
+	
+	public function UpdateInventory($data, $id) {
+		$this->inventory = $this->load->database('default', TRUE);
+		
+		$this->inventory->where('id', $id);
+		$this->inventory->update('inventory', $data);
+
+		return TRUE;
     }
 
-    public function deleteInventory($name) {
-        $this->db->where('inventory_name', $name);
-        $this->db->delete('inventory');
+	public function GetInventory() {
+		$this->inventory = $this->load->database('default', TRUE);
+
+        return $this->inventory->get('inventory');
+	}
+
+	public function GetInventoryBasedOnId($id) {
+		$this->inventory = $this->load->database('default', TRUE);
+
+		$query = $this->inventory->get_where('inventory', array('id' => $id));
+
+        return $query;
+        // return $this->inventory->get('inventory');
+	}
+	
+    public function deleteInventory($id) {
+		$this->inventory = $this->load->database('default', TRUE);
+		
+        $this->inventory->where('id', $id);
+		$this->inventory->delete('inventory');
+		
+		return TRUE;
     }
 
     public function getLastInventoryId() {
-        $this->db->select_max('inventory_id');
-        $query = $this->db->get('inventory');
+		$this->inventory = $this->load->database('default', TRUE);
+
+        $this->inventory->select_max('id');
+        $query = $this->inventory->get('inventory');
         $result = $query->row_array();
-        return $result['inventory_id'] ?? 0;
+        return $result['id'] ?? 0;
     }
 }

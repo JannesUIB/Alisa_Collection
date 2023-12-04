@@ -18,13 +18,68 @@ class Sales extends CI_Controller {
 	 * map to /index.php/welcome/<method_name>
 	 * @see https://codeigniter.com/userguide3/general/urls.html
 	 */
+	public function __construct() {
+        parent::__construct();
+        $this->load->model('Sales_model');
+    }
+
 	public function index()
 	{
-		$this->load->view('/sales/index');
+		$sales = $this->Inventory_model->GetInventory()->result();
+
+		$data['sales'] = $sales;
+		$this->load->view('/sales/index', $data);
 	}
 
 	public function form()
 	{
-		$this->load->view('/sales/form');
+		$this->load->view('/inventory/form');
 	}
+
+	public function formselectedid($id){
+		$record = $this->Inventory_model->GetInventoryBasedOnId($id)->result();
+
+		$data['record'] = $record;
+		$this->load->view('/inventory/formid', $data);
+	}
+
+    public function addInventory() {
+		$inventory_name = $this->input->post('inventory_name');
+		$inventory_category = $this->input->post('inventory_category');
+		$inventory_type = $this->input->post('inventory_type');
+		$inventory_internal_references = $this->input->post('inventory_internal_references');
+		$inventory_barcode = $this->input->post('inventory_barcode');
+		$inventory_price = $this->input->post('inventory_price');
+		$inventory_description = $this->input->post('inventory_description');
+		
+		$lastId = $this->Inventory_model->getLastInventoryId();
+		$id = ($lastId) ? $lastId + 1 : 1;
+
+		$data = array(
+			'id' => $id,
+			'Item_Name' => $inventory_name,
+			'Internal_Ref' => $inventory_internal_references,
+			'Barcode' => $inventory_barcode,
+			'Item_Category' => $inventory_category,
+			'Item_Type' => $inventory_type,
+			'Sales_Prices' => $inventory_price,
+			'description' => $inventory_description,
+		);
+
+		$this->Inventory_model->addInventory($data);
+		// Redirect or load view as needed
+		$this->load->view('/inventory/formid', $id);
+    }
+
+    public function delete($id) {
+		$this->Inventory_model->deleteInventory($id);
+
+		$inventories = $this->Inventory_model->GetInventory()->result();
+
+		$data['invetories'] = $inventories;
+		// $this->index();
+		redirect('Inventory/index');
+        // Redirect or load view as needed
+    }
 }
+

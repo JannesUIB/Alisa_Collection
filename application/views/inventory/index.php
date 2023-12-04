@@ -41,6 +41,16 @@
 							<th>Barcode</th>
 							<th>Sales Price</th>
 						</td>
+						<?php
+							foreach ($invetories as $inventory) {
+								echo "<tr>";
+								echo "<td>".$inventory->Item_Name."</td>";
+								echo "<td>".$inventory->Internal_Ref."</td>";
+								echo "<td>".$inventory->Barcode."</td>";
+								echo "<td>".$inventory->Sales_Prices."</td>";
+								echo "</tr>";
+							}
+						?>
 						<tr>
 							<td />
 							<td />

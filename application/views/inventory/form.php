@@ -18,52 +18,52 @@
 	</style>
 	<body>
 		<div class="container shadow p-3 mb-3 mt-4 bg-white rounded">
-			<div class="row">
+			<!-- <div class="row">
 				<div class="col">
 					<div class="d-flex flex-row">
 						<div class="p-2"><button type="button" class="btn btn-primary" style="width:90px;">Edit</button></div>
 						<div class="p-2"><button type="button" class="btn btn-danger"  style="width:90px;">Delete</button></div>
 					</div>
 				</div>
-			</div>
+			</div> -->
 			<div class="row">
 				<div class="col">
 					<h1>Inventory</h1>
 					<div class="">
-						<form>
+						<form method="POST" action="addInventory">
 							<div class="form-group">
-								<input type="text" class="form-control" placeholder="Item's Name" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;height:80px;font-size:24px; width:50%">
+								<input type="text" class="form-control" name="inventory_name" placeholder="Item's Name" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;height:80px;font-size:24px; width:50%">
 							</div>
-
 							<h3>Item's Details</h3>
 							<div class="row">
 								<div class="col">
 									<Label>Item's Category</label>
-									<input type="text" class="form-control" placeholder="Item's Category" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;">
+									<input type="text" class="form-control" name="inventory_category" placeholder="Item's Category" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;">
 								</div>
 								<div class="col">
 									<Label>Product Type</label>
-									<input type="text" class="form-control" placeholder="Product Type" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;">
+									<input type="text" class="form-control" name="inventory_type" placeholder="Product Type" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;">
 								</div>
 								<div class="col">
 									<Label>Internal References</label>
-									<input type="text" class="form-control" placeholder="Interal References" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;">
+									<input type="text" class="form-control" name="inventory_internal_references" placeholder="Interal References" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;">
 								</div>
 							</div>
 							<div class="row" style="margin-top:10px;">
 								<div class="col">
 									<Label>Barcode</label>
-									<input type="text" class="form-control" placeholder="Barcode" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;">
+									<input type="text" class="form-control" name="inventory_barcode" placeholder="Barcode" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;">
 								</div>
 								<div class="col">
 									<Label>Sales Price</label>
-									<input type="text" class="form-control" placeholder="Sales Price" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;">
+									<input type="text" class="form-control" name="inventory_price" placeholder="Sales Price" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;">
 								</div>
 							</div>
 							<h3 style="margin-top:10px;">Description</h3>
 							<div class="form-group">
-								<textarea class="form-control border-top-0 border-right-0 border-left-0 border-bottom border-dark" rows="3" placeholder="Item's Description" style="resize:none;"></textarea>
+								<textarea name="inventory_description" class="form-control border-top-0 border-right-0 border-left-0 border-bottom border-dark" rows="3" placeholder="Item's Description" style="resize:none;"></textarea>
 							</div>
+							<button type="submit" class="btn btn-info btn-lg btn-block" style="margin-top:10px;">Add Inventory</button>
 						</form>
 					</div>
 				</div>
