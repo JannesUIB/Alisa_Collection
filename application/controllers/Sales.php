@@ -25,7 +25,7 @@ class Sales extends CI_Controller {
 
 	public function index()
 	{
-		$sales = $this->Inventory_model->GetInventory()->result();
+		$sales = $this->Sales_model->GetSales()->result();
 
 		$data['sales'] = $sales;
 		$this->load->view('/sales/index', $data);
@@ -33,48 +33,58 @@ class Sales extends CI_Controller {
 
 	public function form()
 	{
-		$this->load->view('/inventory/form');
+		$this->load->view('/sales/form');
 	}
 
 	public function formselectedid($id){
-		$record = $this->Inventory_model->GetInventoryBasedOnId($id)->result();
+		$record = $this->Sales_model->GetSalesBasedOnId($id)->result();
 
 		$data['record'] = $record;
-		$this->load->view('/inventory/formid', $data);
+		$this->load->view('/Sales/formid', $data);
 	}
 
-    public function addInventory() {
-		$inventory_name = $this->input->post('inventory_name');
-		$inventory_category = $this->input->post('inventory_category');
-		$inventory_type = $this->input->post('inventory_type');
-		$inventory_internal_references = $this->input->post('inventory_internal_references');
-		$inventory_barcode = $this->input->post('inventory_barcode');
-		$inventory_price = $this->input->post('inventory_price');
-		$inventory_description = $this->input->post('inventory_description');
+    public function addSales() {
+		$customer_name = $this->input->post('customer_name');
+		$table_data = $this->input->post('tableData');
+		$sale_subtotal = 0;
+		$sale_discount = 0;
+		$sale_total = 0;
 		
-		$lastId = $this->Inventory_model->getLastInventoryId();
+		$lastId = $this->Sales_model->getLastSalesId();
 		$id = ($lastId) ? $lastId + 1 : 1;
 
 		$data = array(
 			'id' => $id,
-			'Item_Name' => $inventory_name,
-			'Internal_Ref' => $inventory_internal_references,
-			'Barcode' => $inventory_barcode,
-			'Item_Category' => $inventory_category,
-			'Item_Type' => $inventory_type,
-			'Sales_Prices' => $inventory_price,
-			'description' => $inventory_description,
+			'Customer_Name' => $customer_name,
+
 		);
 
-		$this->Inventory_model->addInventory($data);
+		$this->Sales_model->addSales($data);
+
+		$table_array = json_decode($table_data, true);
+		foreach ($table_array as $row) {
+			// $row is now an array representing each row
+			// You can access individual elements in the row using indexes
+			$lastsolId = $this->Sales_model->getLastSoLId();
+			$sol_id = ($lastsolId) ? $lastsolId + 1 : 1;
+			$sol_data = array(
+				'id' => $sol_id,
+				'Sale_ID' => $id,
+				'Item_ID' => 1,
+				'Quantity'=> $row['Quantity'],
+				'Price'=> $row['Price'],
+				'Discount'=> $row['Discount'],
+			);
+			$this->Sales_model->AddSalesOrderLine($sol_data);
+		}
 		// Redirect or load view as needed
-		$this->load->view('/inventory/formid', $id);
+		redirect('Sales/formselectedid/'. $id);
     }
 
     public function delete($id) {
-		$this->Inventory_model->deleteInventory($id);
+		$this->Sales_model->deleteInventory($id);
 
-		$inventories = $this->Inventory_model->GetInventory()->result();
+		$inventories = $this->Sales_model->GetInventory()->result();
 
 		$data['invetories'] = $inventories;
 		// $this->index();
