@@ -43,9 +43,9 @@
 						<?php
 							foreach ($sales as $sale) {
 								echo "<tr>";
-								echo "<td>".$inventory->Name."</td>";
-								echo "<td>".$inventory->Customer_Name."</td>";
-								echo "<td>".$inventory->Sale_Total."</td>";
+								echo "<td>".$sale->ID."</td>";
+								echo "<td>".$sale->Customer_Name."</td>";
+								echo "<td>".$sale->Sale_Total."</td>";
 								echo "</tr>";
 							}
 						?>

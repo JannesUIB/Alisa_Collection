@@ -17,14 +17,6 @@ class Sales_model extends CI_Model {
 
         $this->sale_order->insert('sale_order_line', $data);
 	}
-	public function UpdateSales($data, $id) {
-		$this->sale_order = $this->load->database('default', TRUE);
-		
-		$this->sale_order->where('id', $id);
-		$this->sale_order->update('sale_order', $data);
-
-		return TRUE;
-    }
 
 	public function GetSales() {
 		$this->sale_order = $this->load->database('default', TRUE);
@@ -34,18 +26,29 @@ class Sales_model extends CI_Model {
 
 	public function GetSalesBasedOnId($id) {
 		$this->sale_order = $this->load->database('default', TRUE);
+		$this->load->model('Inventory_model', 'inventory');
 
 		$query = $this->sale_order->get_where('sale_order', array('id' => $id));
-
-        return $query;
+		$secondQuery = $this->sale_order->get_where('sale_order_line', array('Sale_ID' =>$id));
+		foreach($secondQuery->result() as $sol){
+			$item = $this->inventory->GetInventoryBasedOnId($sol->Item_ID)->row();
+			$sol->Item_Name = $item->Item_Name;
+		}
+		
+        return [$query, $secondQuery];
         // return $this->sale_order->get('sale_order');
 	}
 	
     public function deleteSales($id) {
 		$this->sale_order = $this->load->database('default', TRUE);
 		
-        $this->sale_order->where('id', $id);
-		$this->sale_order->delete('sale_order');
+		$this->sale_order->delete('sale_order_line', array('Sale_ID' => $id));
+		$this->sale_order->delete('sale_order', array('ID' => $id));
+		// $this->sale_order->where('Sale_ID', $id);
+		// $this->sale_order->delete('sale_order_line');
+
+        // $this->sale_order->where('id', $id);
+		// $this->sale_order->delete('sale_order');
 		
 		return TRUE;
     }
@@ -65,5 +68,14 @@ class Sales_model extends CI_Model {
         $query = $this->sale_order->get('sale_order_line');
         $result = $query->row_array();
         return $result['id'] ?? 0;
+	}
+	
+	public function UpdateSales($data, $id) {
+		$this->sale_order = $this->load->database('default', TRUE);
+		
+		$this->sale_order->where('id', $id);
+		$this->sale_order->update('sale_order', $data);
+
+		return TRUE;
     }
 }
