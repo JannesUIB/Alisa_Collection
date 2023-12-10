@@ -7,24 +7,24 @@ class Purchase_model extends CI_Model {
 	}
 
 	public function AddPurchase($data) {
-        $this->purchase->insert('inventory', $data);
+        $this->purchase->insert('purchase_order', $data);
     }
 
 	public function GetPurchase() {
 		$this->purchase = $this->load->database('default', TRUE);
 
-        return $this->purchase->get('inventory');
+        return $this->purchase->get('purchase_order');
 	}
 	
-    public function deletePurchase($name) {
-        $this->purchase->where('inventory_name', $name);
-        $this->purchase->delete('inventory');
+    public function deletePurchase($id) {
+        $this->purchase->where('ID', $id);
+        $this->purchase->delete('puchase_order');
     }
 
     public function getLastPurchaseId() {
-        $this->purchase->select_max('inventory_id');
-        $query = $this->purchase->get('inventory');
+        $this->purchase->select_max('ID');
+        $query = $this->purchase->get('purchase_order');
         $result = $query->row_array();
-        return $result['inventory_id'] ?? 0;
+        return $result['ID'] ?? 0;
     }
 }

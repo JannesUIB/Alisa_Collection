@@ -20,7 +20,8 @@ class Sales extends CI_Controller {
 	 */
 	public function __construct() {
         parent::__construct();
-        $this->load->model('Sales_model');
+		$this->load->model('Sales_model');
+		$this->load->model('Inventory_model');
     }
 
 	public function index()
@@ -33,15 +34,18 @@ class Sales extends CI_Controller {
 
 	public function form()
 	{
-		$this->load->view('/sales/form');
+		$inventory_record = $this->Inventory_model->GetInventory()->result();
+		$data['inventory_records'] = $inventory_record;
+		$this->load->view('/sales/form', $data);
+		
 	}
 
 	public function formselectedid($id){
 		$sale_record = $this->Sales_model->GetSalesBasedOnId($id);
-
+		
 		$data['sale_record'] = $sale_record[0]->result();
 		$data['sale_order_line_record'] = $sale_record[1]->result();
-
+		// $data['inventory_records'] = $inventory_record;
 
 		$this->load->view('/Sales/formid', $data);
 	}
@@ -73,7 +77,7 @@ class Sales extends CI_Controller {
 			$sol_data = array(
 				'id' => $sol_id,
 				'Sale_ID' => $id,
-				'Item_ID' => 1,
+				'Item_ID' => $row['Item_ID'],
 				'Quantity'=> $row['Quantity'],
 				'Price'=> $row['Price'],
 				'Discount'=> $row['Discount'],

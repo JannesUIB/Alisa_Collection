@@ -42,7 +42,14 @@
 							<div class="row">
 								<div class="col">
 									<Label>Item's Name</label>
-									<input type="text" class="form-control" placeholder="Item's Name" id="item_name" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;">
+									<!-- <input type="text" class="form-control" placeholder="Item's Name" id="item_name" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;">
+									 -->
+									 <select class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+										<?php foreach($inventory_records as $inventory) {
+											echo "<option value='" . $inventory->ID . "'>" . $inventory->Item_Name . "</option>";
+										}
+										?>
+									</select>
 								</div>
 								<div class="col">
 									<Label>Quantity</label>
@@ -65,7 +72,8 @@
 									<table id="table_sol" class="table table-sm table-bordered border-dark">
 										<thead>
 											<tr>
-												<th id="Item_ID">Product</th>
+												<th class="d-none" id="Item_ID">ID</th>
+												<th id="Item_Name">Product</th>
 												<th id="Quantity">Quantity</th>
 												<th id="Price">Price</th>
 												<th id="Discount">Disc(%)</th>
@@ -127,7 +135,7 @@
 				var rowData = {};
 
 				// Loop through the cells in each row
-				for (var j = 0; j < 4; j++) {
+				for (var j = 0; j < 5; j++) {
 					var headerId = headers[j].id;
             		rowData[headerId] = cells[j].textContent;
 				}
@@ -156,7 +164,7 @@
 			// Handle button click
 			document.getElementById("insert_item").addEventListener("click", function() {
 				// Get form data
-				const name = document.getElementById("item_name").value;
+				const name = document.getElementById("inlineFormCustomSelect");
 				const quantity = document.getElementById("item_quantity").value;
 				const price = document.getElementById("item_price").value;
 				const discount = document.getElementById("item_discount").value;
@@ -164,7 +172,7 @@
 				const discount_amount = subtotal * discount / 100;
 
 				// Validate if name and email are not empty
-				if (name.trim() === "" || quantity.trim() === "" || price.trim() === "" ) {
+				if (name.value.trim() === "" || quantity.trim() === "" || price.trim() === "" ) {
 					alert("Invalid Value");
 					return;
 				}
@@ -172,7 +180,8 @@
 				// Create a new row
 				const newRow = document.createElement("tr");
 				newRow.innerHTML = `
-					<td>${name}</td>
+					<td class='d-none'>${name.value}</td>
+					<td>${name.options[name.selectedIndex].text}</td>
 					<td>${quantity}</td>
 					<td>${price}</td>
 					<td>${discount}</td>
