@@ -28,7 +28,7 @@ class Purchase extends CI_Controller {
 	{
 		$purchase = $this->Purchase_model->GetPurchase()->result();
 
-		$data['purchase'] = $purchase;
+		$data['purchases'] = $purchase;
 		$this->load->view('/purchase/index', $data);
 	}
 
@@ -72,32 +72,32 @@ class Purchase extends CI_Controller {
 		foreach ($table_array as $row) {
 			// $row is now an array representing each row
 			// You can access individual elements in the row using indexes
-			$lastsolId = $this->Purchase_model->getLastSoLId();
-			$sol_id = ($lastsolId) ? $lastsolId + 1 : 1;
-			$sol_data = array(
-				'id' => $sol_id,
-				'Sale_ID' => $id,
+			$lastpolId = $this->Purchase_model->getLastPoLId();
+			$pol_id = ($lastpolId) ? $lastpolId + 1 : 1;
+			$pol_data = array(
+				'id' => $pol_id,
+				'Purchase_ID' => $id,
 				'Item_ID' => $row['Item_ID'],
 				'Quantity'=> $row['Quantity'],
 				'Price'=> $row['Price'],
 				'Discount'=> $row['Discount'],
 			);
-			$sale_subtotal += $row['Quantity'] * $row['Price'];
-			$sale_discount += ($row['Quantity'] * $row['Price']) * $row['Discount'] / 100;
-			$sale_total += $sale_subtotal - $sale_discount;
-			$this->Purchase_model->AddSalesOrderLine($sol_data);
+			$purchase_subtotal += $row['Quantity'] * $row['Price'];
+			$purchase_discount += ($row['Quantity'] * $row['Price']) * $row['Discount'] / 100;
+			$purchase_total += $purchase_subtotal - $purchase_subtotal;
+			$this->Purchase_model->AddPurchaseOrderLine($pol_data);
 		}
 		$price_data = array (
-			'Amount_Untaxed' => $sale_subtotal,
-			'Tax' => $sale_discount,
-			'Sale_Total' => $sale_total,
+			'Amount_Untaxed' => $purchase_subtotal,
+			'Tax' => $purchase_discount,
+			'Sale_Total' => $purchase_total,
 		);
 		// Redirect or load view as needed
-		$this->Purchase_model->UpdateSales($data, $id);
-		redirect('Sales/formselectedid/'. $id);
+		$this->Purchase_model->UpdatePurchase($price_data, $id);
+		redirect('Purchase/formselectedid/'. $id);
 	}
 
-	public function UpdateSales($id) {
+	public function UpdatePurchase($id) {
 		$customer_name = $this->input->post('customer_name');
 		$table_data = $this->input->post('tableData');
 		$sale_subtotal = 0;
@@ -108,7 +108,7 @@ class Purchase extends CI_Controller {
 			'Customer_Name' => $customer_name,
 		);
 
-		$this->Purchase_model->UpdateSales($data, $id);
+		$this->Purchase_model->UpdatePurchase($data, $id);
 
 		$table_array = json_decode($table_data, true);
 		foreach ($table_array as $row) {
@@ -117,40 +117,42 @@ class Purchase extends CI_Controller {
 			// echo '</pre>';
 			// $row is now an array representing each row
 			// You can access individual elements in the row using indexes
-			if(!$row['SOl_ID']){
-				$lastsolId = $this->Purchase_model->getLastSoLId();
-				$sol_id = ($lastsolId) ? $lastsolId + 1 : 1;
-				$sol_data = array(
-				'id' => $sol_id,
-				'Sale_ID' => $id,
-				'Item_ID' => 1,
+			if(!$row['POL_ID']){
+				$lastsolId = $this->Purchase_model->getLastPoLId();
+				$pol_id = ($lastsolId) ? $lastsolId + 1 : 1;
+				$pol_data = array(
+				'id' => $pol_id,
+				'Purchase_ID' => $id,
+				'Item_ID' => $row['Item_ID'],
 				'Quantity'=> $row['Quantity'],
 				'Price'=> $row['Price'],
 				'Discount'=> $row['Discount'],
 				);
-				$this->Purchase_model->AddSalesOrderLine($sol_data);
+				$this->Purchase_model->AddPurchaseOrderLine($pol_data);
 			}
 		}
 		// Redirect or load view as needed
-		redirect('Sales/formselectedid/'. $id);
+		redirect('Purchase/formselectedid/'. $id);
     }
 
     public function delete($id) {
-		$this->Purchase_model->deleteSales($id);
+		$this->Purchase_model->deletePurchase($id);
 
 		// $this->index();
-		redirect('Sales/index');
+		redirect('Purchase/index');
         // Redirect or load view as needed
 	}
 	
 	public function edit($id) {
-		$sale_record = $this->Purchase_model->GetSalesBasedOnId($id);
+		$purchase_record = $this->Purchase_model->GetPurchaseBasedOnId($id);
+		$inventory_record = $this->Inventory_model->GetInventory()->result();
 
-		$data['sale_record'] = $sale_record[0]->result();
-		$data['sale_order_line_record'] = $sale_record[1]->result();
+		$data['purchase_record'] = $purchase_record[0]->result();
+		$data['purchase_order_line_record'] = $purchase_record[1]->result();
+		$data['inventory_records'] = $inventory_record;
 
 
-		$this->load->view('/Sales/formid_edit', $data);
+		$this->load->view('/purchase/formid_edit', $data);
 		// $this->load->view('/inventory/formid_edit', $data);
         // Redirect or load view as needed
     }

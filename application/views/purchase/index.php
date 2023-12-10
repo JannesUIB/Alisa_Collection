@@ -4,7 +4,7 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-		<title>Sales</title>
+		<title>Purchase | Home</title>
 	</head>
 	<style>
 		div.row div.col table.table-striped tr td{
@@ -40,6 +40,15 @@
 							<th>Vendor</th>
 							<th>Purchase Order Total</th>
 						</td>
+						<?php
+							foreach ($purchases as $purchase) {
+								echo "<tr>";
+								echo "<td><a href='". site_url('Purchase/formselectedid/'. $purchase->ID) ."'>". $purchase->ID ."</a></td>";
+								echo "<td>".$purchase->Customer_Name."</td>";
+								echo "<td>".$purchase->Sale_Total."</td>";
+								echo "</tr>";
+							}
+						?>
 						<tr>
 							<td />
 							<td />

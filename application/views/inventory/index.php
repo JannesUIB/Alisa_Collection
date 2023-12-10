@@ -44,7 +44,7 @@
 						<?php
 							foreach ($invetories as $inventory) {
 								echo "<tr>";
-								echo "<td>".$inventory->Item_Name."</td>";
+								echo "<td><a href='". site_url('Inventory/formselectedid/'. $inventory->ID) ."'>". $inventory->Item_Name ."</a></td>";
 								echo "<td>".$inventory->Internal_Ref."</td>";
 								echo "<td>".$inventory->Barcode."</td>";
 								echo "<td>".$inventory->Sales_Prices."</td>";

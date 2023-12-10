@@ -9,7 +9,7 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-		<title>Sales</title>
+		<title>Purchase | Form</title>
 	</head>
 	<style>
 		div.row div.col table.table-bordered tr td{
@@ -22,13 +22,13 @@
 		}
 	</style>
 	<body>
-		<?php foreach($sale_record as $rec){?>
+		<?php foreach($purchase_record as $rec){?>
 		<div class="container shadow p-3 mb-3 mt-5 bg-white rounded">
 			<div class="row">
 				<div class="col">
 					<div class="d-flex flex-row">
-						<div class="p-2"><a class="btn btn-primary" style="width:90px;text-decoration:none;" href="<?php echo site_url('Sales/edit/'. $rec->ID); ?>">Edit</a></div>
-						<div class="p-2"><a class="btn btn-danger"  style="width:90px;text-decoration:none;" href="<?php echo site_url('Sales/delete/'. $rec->ID); ?>">Delete</a></div>
+						<div class="p-2"><a class="btn btn-primary" style="width:90px;text-decoration:none;" href="<?php echo site_url('Purchase/edit/'. $rec->ID); ?>">Edit</a></div>
+						<div class="p-2"><a class="btn btn-danger"  style="width:90px;text-decoration:none;" href="<?php echo site_url('Purchase/delete/'. $rec->ID); ?>">Delete</a></div>
 					</div>
 				</div>
 			</div>
@@ -38,11 +38,11 @@
 					<div class="">
 						<form id="sale_form" method="POST" action="<?php echo site_url('Sales/AddSales'); ?>">
 							<div class="form-group">
-								<input type="text" class="form-control" placeholder="Sales Order ID" value="<?php echo $rec->ID?>" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;height:80px;font-size:24px; width:50%" readonly>
+								<input type="text" class="form-control" placeholder="Purchase Order ID" value="<?php echo $rec->ID?>" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;height:80px;font-size:24px; width:50%" readonly>
 							</div>
 							<div class="form-group">
-								<Label>Customer</label>
-								<input type="text" class="form-control" placeholder="Customer Name" name="customer_name" value="<?php echo $rec->Customer_Name?>" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;width:30% " readonly>
+								<Label>Vendor</label>
+								<input type="text" class="form-control" placeholder="Vendor Name" name="customer_name" value="<?php echo $rec->Customer_Name?>" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;width:30% " readonly>
 							</div>
 							<!-- <h3>Item's Details</h3>
 							<div class="row">
@@ -80,7 +80,7 @@
 											</tr>
 										</thead>
 										<tbody>
-												<?php foreach($sale_order_line_record as $reco){
+												<?php foreach($purchase_order_line_record as $reco){
 													echo "<tr>";
 													echo "<td class='d-none'>" .  $reco->ID . "</td>" ;
 													echo "<td>" . $reco->Item_Name . "</td>" ;
@@ -90,9 +90,9 @@
 													echo "<td>" . number_format($reco->Quantity * $reco->Price,2,',','.') ."</td>" ;
 													echo "</tr>";
 													$subtotal += $reco->Quantity * $reco->Price;
-													$dicount_total += ($reco->Quantity * $reco->Price) * $reco->Discount / 100;	
-												}
-												$sale_total += $subtotal - $dicount_total;?>
+													$dicount_total += ($reco->Quantity * $reco->Price) * $reco->Discount / 100;
+													
+												} $sale_total += $subtotal - $dicount_total;?>
 										</tbody>
 									</table>
 								</div>

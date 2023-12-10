@@ -31,7 +31,7 @@
 				<div class="col">
 					<h1>Inventory</h1>
 					<div class="">
-						<form method="POST" action="<?php echo site_url('inventory/AddInventory/'. $rec->ID); ?>">>
+						<form method="POST" action="<?php echo site_url('inventory/AddInventory/'. $rec->ID); ?>">
 							<div class="form-group">
 								<input type="text" class="form-control" name="inventory_name" placeholder="Item's Name" value="<?php echo $rec->Item_Name ?>" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;height:80px;font-size:24px; width:50%" readonly>
 							</div>

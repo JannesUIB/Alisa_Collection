@@ -43,7 +43,7 @@
 						<?php
 							foreach ($sales as $sale) {
 								echo "<tr>";
-								echo "<td>".$sale->ID."</td>";
+								echo "<td><a href='". site_url('Sales/formselectedid/'. $sale->ID) ."'>". $sale->ID ."</a></td>";
 								echo "<td>".$sale->Customer_Name."</td>";
 								echo "<td>".$sale->Sale_Total."</td>";
 								echo "</tr>";

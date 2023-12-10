@@ -28,19 +28,25 @@
 				<div class="col">
 					<h1>Sales Order</h1>
 					<div class="">
-						<form id="sale_form" method="POST" action="<?php echo site_url('Sales/UpdateSales/' . $rec->ID); ?>">
+						<form id="sales_form" method="POST" action="<?php echo site_url('Sales/UpdateSales/' . $rec->ID); ?>">
 							<div class="form-group">
 								<input type="text" class="form-control" placeholder="Sales Order ID" value="<?php echo $rec->ID?>" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;height:80px;font-size:24px; width:50%" readonly>
 							</div>
 							<div class="form-group">
 								<Label>Customer</label>
-								<input type="text" class="form-control" placeholder="Customer Name" name="customer_name" value="<?php echo $rec->Customer_Name?>" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;width:30% " >
+								<input type="text" class="form-control" placeholder="Vendor Name" name="customer_name" value="<?php echo $rec->Customer_Name?>" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;width:30% " >
 							</div>
 							<h3>Item's Details</h3>
 							<div class="row">
 								<div class="col">
 									<Label>Item's Name</label>
-									<input type="text" class="form-control" placeholder="Item's Name" id="item_name" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;">
+									<!-- <input type="text" class="form-control" placeholder="Item's Name" id="item_name" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;"> -->
+									<select class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+										<?php foreach($inventory_records as $inventory) {
+											echo "<option value='" . $inventory->ID . "'>" . $inventory->Item_Name . "</option>";
+										}
+										?>
+									</select>
 								</div>
 								<div class="col">
 									<Label>Quantity</label>
@@ -63,28 +69,34 @@
 									<table id="table_sol" class="table table-sm table-bordered border-dark">
 										<thead>
 											<tr>
-												<th class="d-none" id="SOl_ID">SOL ID</th>
-												<th id="Item_ID">Product</th>
+												<th class="d-none" id="SOl_ID">POL ID</th>
+												<th class="d-none" id="Item_ID">ID</th>
+												<th id="Item_Name">Product</th>
 												<th id="Quantity">Quantity</th>
-												<th id="Price">Price</th>
+												<th class="d-none" id="Price">Price</th>
+												<th id="Formatted_Price">Price</th>
 												<th id="Discount">Disc(%)</th>
 												<th>Subtotal</th>
 											</tr>
 										</thead>
 										<tbody>
-												<?php foreach($sale_order_line_record as $reco){
+												<?php 
+													foreach($sale_order_line_record as $reco){
 													echo "<tr>";
 													echo "<td class='d-none'>" .  $reco->ID . "</td>" ;
+													echo "<td class='d-none'> </td>" ;
 													echo "<td>" . $reco->Item_Name . "</td>" ;
 													echo "<td>" . $reco->Quantity . "</td>" ;
-													echo "<td>" . $reco->Price. "</td>" ;
+													echo "<td class='d-none'>" . $reco->Price . "</td>" ;
+													echo "<td>" . number_format($reco->Price,2,',','.') . "</td>" ;
 													echo "<td>" . $reco->Discount."</td>" ;
-													echo "<td>" . $reco->Quantity * $reco->Price ."</td>" ;
+													echo "<td>" . number_format($reco->Quantity * $reco->Price,2,',','.') ."</td>" ;
 													echo "</tr>";
 													$subtotal += $reco->Quantity * $reco->Price;
 													$dicount_total += ($reco->Quantity * $reco->Price) * $reco->Discount / 100;
+													}
 													$sale_total += $subtotal - $dicount_total;
-												}?>
+													?>
 										</tbody>
 									</table>
 								</div>
@@ -93,21 +105,37 @@
 								<div class="col">
 									<div class="d-flex flex-row-reverse">
 										<table class="table table-sm table-borderless">
-											<tr>
-												<td rowspan="3"><textarea class="form-control border-top-0 border-right-0 border-left-0 border-bottom border-dark" rows="3" placeholder="Sales Note" style="resize:none;" ></textarea></td>
+											<tr class="d-none">
+												<td rowspan="3"><textarea class="form-control border-top-0 border-right-0 border-left-0 border-bottom border-dark" rows="3" placeholder="Sales Note" style="resize:none;"></textarea></td>
 												<td class="text-right">Subtotal</td>
 												<td style="width:1%;">:</td>
 												<td id="sale_subtotal"><?php echo $subtotal ?></td>
 											</tr>
-											<tr>
+											<tr class="d-none">
 												<td  class="text-right">Discount</td>
 												<td style="width:1%;">:</td>
 												<td id="sale_discount"><?php echo $dicount_total ?></td>
 											</tr>
-											<tr>
+											<tr class="d-none">
 												<td  class="text-right"><h5>Sales Total</h5></td>
 												<td style="width:1%;">:</td>
 												<td id="sales_total"><?php echo $sale_total ?></td>
+											</tr>
+											<tr>
+												<td rowspan="3"><textarea class="form-control border-top-0 border-right-0 border-left-0 border-bottom border-dark" rows="3" placeholder="Sales Note" style="resize:none;" readonly></textarea></td>
+												<td class="text-right">Subtotal</td>
+												<td style="width:1%;">:</td>
+												<td id="formatted_sale_subtotal"><?php echo number_format($subtotal,2,',','.')  ?></td>
+											</tr>
+											<tr>
+												<td  class="text-right">Discount</td>
+												<td style="width:1%;">:</td>
+												<td id="formatted_sale_discount"><?php echo number_format($dicount_total,2,',','.')  ?></td>
+											</tr>
+											<tr>
+												<td  class="text-right"><h5>Sales Total</h5></td>
+												<td style="width:1%;">:</td>
+												<td id="formatted_sales_total"><?php echo number_format($sale_total,2,',','.') ?></td>
 											</tr>
 										</table>
 									</div>
@@ -140,7 +168,7 @@
 				var rowData = {};
 
 				// Loop through the cells in each row
-				for (var j = 0; j < 5; j++) {
+				for (var j = 0; j < 7; j++) {
 					var headerId = headers[j].id;
             		rowData[headerId] = cells[j].textContent;
 				}
@@ -159,17 +187,17 @@
 			hiddenInput.setAttribute("value", jsonData);
 
 			// Append the hidden input to the form
-			document.getElementById("sale_form").appendChild(hiddenInput);
+			document.getElementById("sales_form").appendChild(hiddenInput);
 
 			// Submit the form
-			document.getElementById("sale_form").submit();
+			document.getElementById("sales_form").submit();
 		}
 
 		document.addEventListener("DOMContentLoaded", function() {
 			// Handle button click
 			document.getElementById("insert_item").addEventListener("click", function() {
 				// Get form data
-				const name = document.getElementById("item_name").value;
+				const name = document.getElementById("inlineFormCustomSelect");
 				const quantity = document.getElementById("item_quantity").value;
 				const price = document.getElementById("item_price").value;
 				const discount = document.getElementById("item_discount").value;
@@ -177,34 +205,46 @@
 				const discount_amount = subtotal * discount / 100;
 
 				// Validate if name and email are not empty
-				if (name.trim() === "" || quantity.trim() === "" || price.trim() === "" ) {
+				if (name.value.trim() === "" || quantity.trim() === "" || price.trim() === "" ) {
 					alert("Invalid Value");
 					return;
 				}
-
+				
+				const formattedPrice = Number(price).toLocaleString('id-ID', { minimumFractionDigits: 2 });
+				const formattedSubtotal = Number(subtotal).toLocaleString('id-ID', { minimumFractionDigits: 2 });
 				// Create a new row
 				const newRow = document.createElement("tr");
 				newRow.innerHTML = `
-					<td class="d-none"></td>
-					<td>${name}</td>
+					<td class='d-none'></td>
+					<td class='d-none'>${name.value}</td>
+					<td>${name.options[name.selectedIndex].text}</td>
 					<td>${quantity}</td>
-					<td>${price}</td>
+					<td class='d-none'>${price}</td>
+					<td>${formattedPrice}</td>
 					<td>${discount}</td>
-					<td>${subtotal}</td>
+					<td>${formattedSubtotal}</td>
 				`;
 
 				// Append the new row to the table
 				document.getElementById("table_sol").getElementsByTagName('tbody')[0].appendChild(newRow);
-
-
+				console.log(parseInt(document.getElementById("sale_subtotal").textContent))
+				const sale_subtotal = parseFloat(document.getElementById("sale_subtotal").textContent) + subtotal;
+				const sale_discount = parseFloat(document.getElementById("sale_discount").textContent) + discount_amount;
+				const sale_total    = sale_subtotal - sale_discount;
+				const formattedSale_subtotal= Number(sale_subtotal).toLocaleString('id-ID', { minimumFractionDigits: 2 });
+				const formattedSale_discount= Number(sale_discount).toLocaleString('id-ID', { minimumFractionDigits: 2 });
+				const formattedsale_total= Number(sale_total).toLocaleString('id-ID', { minimumFractionDigits: 2 });
 				// Clear the input fields
-				document.getElementById("item_name").value = "";
+				document.getElementById("inlineFormCustomSelect").value = "";
 				document.getElementById("item_quantity").value = "";
 				document.getElementById("item_price").value = "";
 				document.getElementById("item_discount").value = "";
-				document.getElementById("sale_subtotal").textContent = parseFloat(document.getElementById("sale_subtotal").textContent) + subtotal;
-				document.getElementById("sale_discount").textContent = parseFloat(document.getElementById("sale_discount").textContent) + discount_amount;
-				document.getElementById("sales_total").textContent = parseFloat(document.getElementById("sale_subtotal").textContent) - parseFloat(document.getElementById("sale_discount").textContent);
+				document.getElementById("sale_subtotal").textContent = sale_subtotal;
+				document.getElementById("sale_discount").textContent = sale_discount;
+				document.getElementById("sales_total").textContent = sale_total;
+				document.getElementById("formatted_sale_subtotal").textContent = formattedSale_subtotal;
+				document.getElementById("formatted_sale_discount").textContent = formattedSale_discount;
+				document.getElementById("formatted_sales_total").textContent = formattedsale_total;
 			});
 		});
 	</script>

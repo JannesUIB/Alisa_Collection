@@ -55,10 +55,12 @@ class Sales_model extends CI_Model {
 
     public function getLastSalesId() {
 		$this->sale_order = $this->load->database('default', TRUE);
-
-        $this->sale_order->select_max('id');
-        $query = $this->sale_order->get('sale_order');
-        $result = $query->row_array();
+		$query = $this->sale_order->select_max('id')->get('sale_order');
+    
+		// Debugging statements
+		echo $this->sale_order->last_query(); // Print the generated SQL query
+		$result = $query->row_array();
+		print_r($result); // Print the result
         return $result['id'] ?? 0;
 	}
 	public function getLastSoLId() {

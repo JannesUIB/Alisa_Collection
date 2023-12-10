@@ -58,6 +58,7 @@ class Sales extends CI_Controller {
 		$sale_total = 0;
 		
 		$lastId = $this->Sales_model->getLastSalesId();
+		echo($lastId);
 		$id = ($lastId) ? $lastId + 1 : 1;
 
 		$data = array(
@@ -93,7 +94,7 @@ class Sales extends CI_Controller {
 			'Sale_Total' => $sale_total,
 		);
 		// Redirect or load view as needed
-		$this->Sales_model->UpdateSales($data, $id);
+		$this->Sales_model->UpdateSales($price_data, $id);
 		redirect('Sales/formselectedid/'. $id);
 	}
 
@@ -123,7 +124,7 @@ class Sales extends CI_Controller {
 				$sol_data = array(
 				'id' => $sol_id,
 				'Sale_ID' => $id,
-				'Item_ID' => 1,
+				'Item_ID' => $row['Item_ID'],
 				'Quantity'=> $row['Quantity'],
 				'Price'=> $row['Price'],
 				'Discount'=> $row['Discount'],
@@ -145,9 +146,11 @@ class Sales extends CI_Controller {
 	
 	public function edit($id) {
 		$sale_record = $this->Sales_model->GetSalesBasedOnId($id);
+		$inventory_record = $this->Inventory_model->GetInventory()->result();
 
 		$data['sale_record'] = $sale_record[0]->result();
 		$data['sale_order_line_record'] = $sale_record[1]->result();
+		$data['inventory_records'] = $inventory_record;
 
 
 		$this->load->view('/Sales/formid_edit', $data);

@@ -1,10 +1,15 @@
+<?php
+	$subtotal = 0;
+	$dicount_total = 0;
+	$sale_total = 0;
+?>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-		<title>Purchase | Create</title>
+		<title>Purchase | Edit</title>
 	</head>
 	<style>
 		div.row div.col table.table-bordered tr td{
@@ -17,32 +22,25 @@
 		}
 	</style>
 	<body>
+		<?php foreach($purchase_record as $rec){?>
 		<div class="container shadow p-3 mb-3 mt-5 bg-white rounded">
-			<!-- <div class="row">
-				<div class="col">
-					<div class="d-flex flex-row">
-						<div class="p-2"><button type="button" class="btn btn-primary" style="width:90px;">Edit</button></div>
-						<div class="p-2"><button type="button" class="btn btn-danger"  style="width:90px;">Delete</button></div>
-					</div>
-				</div>
-			</div> -->
 			<div class="row">
 				<div class="col">
 					<h1>Purchase Order</h1>
 					<div class="">
-						<form id="purchase_form" method="POST" action="<?php echo site_url('Purchase/AddPurchase'); ?>">
+						<form id="purchase_form" method="POST" action="<?php echo site_url('Purchase/UpdatePurchase/' . $rec->ID); ?>">
 							<div class="form-group">
-								<input type="text" class="form-control" placeholder="Purchase Order ID" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;height:80px;font-size:24px; width:50%" readonly>
+								<input type="text" class="form-control" placeholder="Purchase Order ID" value="<?php echo $rec->ID?>" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;height:80px;font-size:24px; width:50%" readonly>
 							</div>
 							<div class="form-group">
-								<Label>Vendor</label>
-								<input type="text" class="form-control" name="vendor_name" placeholder="Vendor Name" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;width:30% ">
+								<Label>Customer</label>
+								<input type="text" class="form-control" placeholder="Vendor Name" name="customer_name" value="<?php echo $rec->Customer_Name?>" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;width:30% " >
 							</div>
 							<h3>Item's Details</h3>
 							<div class="row">
 								<div class="col">
 									<Label>Item's Name</label>
-									<!-- <input type="text" class="form-control" placeholder="Item's Name" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;"> -->
+									<!-- <input type="text" class="form-control" placeholder="Item's Name" id="item_name" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;"> -->
 									<select class="custom-select mr-sm-2" id="inlineFormCustomSelect">
 										<?php foreach($inventory_records as $inventory) {
 											echo "<option value='" . $inventory->ID . "'>" . $inventory->Item_Name . "</option>";
@@ -52,25 +50,26 @@
 								</div>
 								<div class="col">
 									<Label>Quantity</label>
-									<input type="text" class="form-control" id="item_quantity" placeholder="Quantity" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;">
+									<input type="text" class="form-control" placeholder="Quantity" id="item_quantity" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;">
 								</div>
 							</div>
 							<div class="row" style="margin-top:10px;">
 								<div class="col">
 									<Label>Price</label>
-									<input type="text" class="form-control" id="item_price" placeholder="Price" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;">
+									<input type="text" class="form-control" placeholder="Price" id="item_price" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;">
 								</div>
 								<div class="col">
 									<Label>Discount(%)</label>
-									<input type="text" class="form-control" id="item_discount" placeholder="Discount (%)" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;">
+									<input type="text" class="form-control" placeholder="Discount (%)" id="item_discount" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;">
 								</div>
 							</div>
 							<button type="button" class="btn btn-info btn-lg btn-block" id="insert_item" style="margin-top:10px;">Insert Item Details</button>
-							<div class="row" style="margin-top:10px;">
+							<div class="row" style="margin-top:10px;"> 
 								<div class="col">
 									<table id="table_pol" class="table table-sm table-bordered border-dark">
 										<thead>
 											<tr>
+												<th class="d-none" id="POL_ID">POL ID</th>
 												<th class="d-none" id="Item_ID">ID</th>
 												<th id="Item_Name">Product</th>
 												<th id="Quantity">Quantity</th>
@@ -81,6 +80,23 @@
 											</tr>
 										</thead>
 										<tbody>
+												<?php 
+													foreach($purchase_order_line_record as $reco){
+													echo "<tr>";
+													echo "<td class='d-none'>" .  $reco->ID . "</td>" ;
+													echo "<td class='d-none'> </td>" ;
+													echo "<td>" . $reco->Item_Name . "</td>" ;
+													echo "<td>" . $reco->Quantity . "</td>" ;
+													echo "<td class='d-none'>" . $reco->Price . "</td>" ;
+													echo "<td>" . number_format($reco->Price,2,',','.') . "</td>" ;
+													echo "<td>" . $reco->Discount."</td>" ;
+													echo "<td>" . number_format($reco->Quantity * $reco->Price,2,',','.') ."</td>" ;
+													echo "</tr>";
+													$subtotal += $reco->Quantity * $reco->Price;
+													$dicount_total += ($reco->Quantity * $reco->Price) * $reco->Discount / 100;
+													}
+													$sale_total += $subtotal - $dicount_total;
+													?>
 										</tbody>
 									</table>
 								</div>
@@ -93,44 +109,45 @@
 												<td rowspan="3"><textarea class="form-control border-top-0 border-right-0 border-left-0 border-bottom border-dark" rows="3" placeholder="Purchase Note" style="resize:none;"></textarea></td>
 												<td class="text-right">Subtotal</td>
 												<td style="width:1%;">:</td>
-												<td id="sale_subtotal">0</td>
+												<td id="sale_subtotal"><?php echo $subtotal ?></td>
 											</tr>
 											<tr class="d-none">
 												<td  class="text-right">Discount</td>
 												<td style="width:1%;">:</td>
-												<td id="sale_discount">0</td>
+												<td id="sale_discount"><?php echo $dicount_total ?></td>
 											</tr>
 											<tr class="d-none">
 												<td  class="text-right"><h5>Sales Total</h5></td>
 												<td style="width:1%;">:</td>
-												<td id="sales_total">0</td>
+												<td id="sales_total"><?php echo $sale_total ?></td>
 											</tr>
 											<tr>
-												<td rowspan="3"><textarea class="form-control border-top-0 border-right-0 border-left-0 border-bottom border-dark" rows="3" placeholder="Purchase Note" style="resize:none;"></textarea></td>
+												<td rowspan="3"><textarea class="form-control border-top-0 border-right-0 border-left-0 border-bottom border-dark" rows="3" placeholder="Purchase Note" style="resize:none;" readonly></textarea></td>
 												<td class="text-right">Subtotal</td>
 												<td style="width:1%;">:</td>
-												<td id="formatted_sale_subtotal">0</td>
+												<td id="formatted_sale_subtotal"><?php echo number_format($subtotal,2,',','.')  ?></td>
 											</tr>
 											<tr>
 												<td  class="text-right">Discount</td>
 												<td style="width:1%;">:</td>
-												<td id="formatted_sale_discount">0</td>
+												<td id="formatted_sale_discount"><?php echo number_format($dicount_total,2,',','.')  ?></td>
 											</tr>
 											<tr>
 												<td  class="text-right"><h5>Sales Total</h5></td>
 												<td style="width:1%;">:</td>
-												<td id="formatted_sales_total">0</td>
+												<td id="formatted_sales_total"><?php echo number_format($sale_total,2,',','.') ?></td>
 											</tr>
 										</table>
 									</div>
 								</div>
 							</div>
-							<button type="button" onclick="submitForm()" class="btn btn-info btn-lg btn-block" style="margin-top:10px;">Create Purchase</button>
+							<button type="button" onclick="submitForm()" class="btn btn-info btn-lg btn-block" style="margin-top:10px;">Update Purchase</button>
 						</form>
 					</div>
 				</div>
 			</div>
 		</div>
+		<?php } ?>
 	</body>
 	<script>
 		function submitForm() {
@@ -151,7 +168,7 @@
 				var rowData = {};
 
 				// Loop through the cells in each row
-				for (var j = 0; j < 6; j++) {
+				for (var j = 0; j < 7; j++) {
 					var headerId = headers[j].id;
             		rowData[headerId] = cells[j].textContent;
 				}
@@ -198,6 +215,7 @@
 				// Create a new row
 				const newRow = document.createElement("tr");
 				newRow.innerHTML = `
+					<td class='d-none'></td>
 					<td class='d-none'>${name.value}</td>
 					<td>${name.options[name.selectedIndex].text}</td>
 					<td>${quantity}</td>
