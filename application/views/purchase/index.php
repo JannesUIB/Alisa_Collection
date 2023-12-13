@@ -15,6 +15,28 @@
 		}
 	</style>
 	<body>
+		<nav class="navbar navbar-expand-lg navbar-light" style="background-color:#c1adcc;">
+			<a class="navbar-brand" style="color:white;" href="#">Modules</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse navv" id="navbarNavDropdown">
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<a class="nav-link" style="color:white;" href="#">Sales</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" style="color:white;" href="#">Purchase</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" style="color:white;" href="#">Inventory</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" style="color:white;" href="#">Accounting Reporting</a>
+					</li>
+				</ul>
+			</div>
+		</nav>
 		<div class="container" style="min-width:100%">
 			<div class="row shadow p-3 mb-5 bg-white rounded">
 				<div class="col">

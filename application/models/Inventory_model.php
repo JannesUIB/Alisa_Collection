@@ -53,5 +53,13 @@ class Inventory_model extends CI_Model {
         $query = $this->inventory->get('inventory');
         $result = $query->row_array();
         return $result['id'] ?? 0;
-    }
+	}
+	
+	public function GetAccountCodeBasedOnID($id){
+		$this->inventory = $this->load->database('default', TRUE);
+
+		$query = $this->inventory->get_where('account_code', array('id' => $id));
+
+        return $query;
+	}
 }

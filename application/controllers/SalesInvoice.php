@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Sales extends CI_Controller {
+class SalesInvoice extends CI_Controller {
 
 	/**
 	 * Index Page for this controller.
@@ -25,30 +25,30 @@ class Sales extends CI_Controller {
 		$this->load->model('Sales_Invoice_model');
     }
 
-	public function index()
-	{
-		$sales = $this->Sales_model->GetSales()->result();
+	// public function index()
+	// {
+	// 	$sales = $this->Sales_model->GetSales()->result();
 
-		$data['sales'] = $sales;
-		$this->load->view('/sales/index', $data);
-	}
+	// 	$data['sales'] = $sales;
+	// 	$this->load->view('/sales/index', $data);
+	// }
 
-	public function form()
-	{
-		$inventory_record = $this->Inventory_model->GetInventory()->result();
-		$data['inventory_records'] = $inventory_record;
-		$this->load->view('/sales/form', $data);
+	// public function form()
+	// {
+	// 	$inventory_record = $this->Inventory_model->GetInventory()->result();
+	// 	$data['inventory_records'] = $inventory_record;
+	// 	$this->load->view('/sales/form', $data);
 		
-	}
+	// }
 
 	public function formselectedid($id){
-		$sale_record = $this->Sales_model->GetSalesBasedOnId($id);
-		
-		$data['sale_record'] = $sale_record[0]->result();
-		$data['sale_order_line_record'] = $sale_record[1]->result();
+		$sales_invoice = $this->Sales_Invoice_model->GetSalesInvoiceBasedOnID($id);
+
+		$data['sale_invoice_record'] = $sales_invoice[0]->result();
+		$data['sale_invoice_line_record'] = $sales_invoice[1]->result();
 		// $data['inventory_records'] = $inventory_record;
 
-		$this->load->view('/Sales/formid', $data);
+		$this->load->view('/Sale_invoice/formid', $data);
 	}
 
 	public function CreateSaleInvoice($sale_id){
@@ -92,6 +92,10 @@ class Sales extends CI_Controller {
 		);
 		$this->Sales_Invoice_model->AddSalesInvoiceLine($sales_order_data);
 
+		$sales_invoice = $this->Sales_Invoice_model->GetSalesInvoiceBasedOnID($id);
+
+		$data['sale_invoice_record'] = $sales_invoice[0]->result();
+		$data['sale_invoice_line_record'] = $sales_invoice[1]->result();
 		// $data['inventory_records'] = $inventory_record;
 
 		redirect('SalesInvoice/formselectedid/'. $id);
@@ -205,9 +209,8 @@ class Sales extends CI_Controller {
 		// $this->load->view('/inventory/formid_edit', $data);
         // Redirect or load view as needed
 	}
-	public function GoToSaleInvoice($id){
-		redirect('SalesInvoice/formselectedid/'. $id);
-		
+	public function GoToSaleOrder($id){
+		redirect('Sales/formselectedid/'. $id);
 	}
 }
 

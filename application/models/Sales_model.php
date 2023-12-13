@@ -27,8 +27,20 @@ class Sales_model extends CI_Model {
 	public function GetSalesBasedOnId($id) {
 		$this->sale_order = $this->load->database('default', TRUE);
 		$this->load->model('Inventory_model', 'inventory');
+		$this->load->model('Sales_model', 'inventory');
 
 		$query = $this->sale_order->get_where('sale_order', array('id' => $id));
+		$sale_invoice_query = $this->sale_order->get_where('sale_invoice', array('Sale_ID' => $id));
+		if(count($sale_invoice_query->result()) >= 1){
+			foreach($query->result() as $sale){
+				$sale->Sale_Invoice_ID = $sale_invoice_query->row()->ID;
+			}
+		}
+		else{
+			foreach($query->result() as $sale){
+				$sale->Sale_Invoice_ID = FALSE;
+			}
+		}
 		$secondQuery = $this->sale_order->get_where('sale_order_line', array('Sale_ID' =>$id));
 		foreach($secondQuery->result() as $sol){
 			$item = $this->inventory->GetInventoryBasedOnId($sol->Item_ID)->row();

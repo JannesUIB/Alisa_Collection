@@ -22,6 +22,28 @@
 		}
 	</style>
 	<body>
+		<nav class="navbar navbar-expand-lg navbar-light" style="background-color:#c1adcc;">
+			<a class="navbar-brand" style="color:white;" href="#">Modules</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse navv" id="navbarNavDropdown">
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<a class="nav-link" style="color:white;" href="#">Sales</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" style="color:white;" href="#">Purchase</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" style="color:white;" href="#">Inventory</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" style="color:white;" href="#">Accounting Reporting</a>
+					</li>
+				</ul>
+			</div>
+		</nav>
 		<?php foreach($sale_record as $rec){?>
 		<div class="container shadow p-3 mb-3 mt-5 bg-white rounded">
 			<div class="row">
@@ -29,12 +51,26 @@
 					<div class="d-flex flex-row">
 						<div class="p-2"><a class="btn btn-primary" style="width:90px;text-decoration:none;" href="<?php echo site_url('Sales/edit/'. $rec->ID); ?>">Edit</a></div>
 						<div class="p-2"><a class="btn btn-danger"  style="width:90px;text-decoration:none;" href="<?php echo site_url('Sales/delete/'. $rec->ID); ?>">Delete</a></div>
+						<?php if($rec->Sale_Invoice_ID === FALSE){
+							echo "<div class='p-2'><a class='btn btn-danger'  style='width:90px;text-decoration:none;' href='" . site_url('Sales/CreateSaleInvoice/'. $rec->ID) . "'>Confirm</a></div>";
+						}
+						else{
+							echo "<div class='ml-auto p-2'><a class='btn btn-info'  style='width:170px;text-decoration:none;' href='" . site_url('Sales/GoToSaleInvoice/'. $rec->Sale_Invoice_ID) . "'>Go To Sale Invoice</a></div>";
+						}
+						?>
 					</div>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col">
-					<h1>Sales Order</h1>
+					<?php if($rec->Status === "Quotation"){
+						echo "<h1>Quotation</h1>";
+					}
+					else{
+						echo "<h1>Sale Order</h1>";
+					}
+					?>
+
 					<div class="">
 						<form id="sale_form" method="POST" action="<?php echo site_url('Sales/AddSales'); ?>">
 							<div class="form-group">
