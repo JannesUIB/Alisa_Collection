@@ -9,7 +9,7 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-		<title>Sales | Form</title>
+		<title>Purchase Bill | Form</title>
 	</head>
 	<style>
 		div.row div.col table.table-bordered tr td{
@@ -44,41 +44,28 @@
 				</ul>
 			</div>
 		</nav>
-		<?php foreach($sale_record as $rec){?>
+		<?php foreach($purchase_bill_record as $rec){?>
 		<div class="container shadow p-3 mb-3 mt-5 bg-white rounded">
 			<div class="row">
 				<div class="col">
 					<div class="d-flex flex-row">
-						<div class="p-2"><a class="btn btn-primary" style="width:90px;text-decoration:none;" href="<?php echo site_url('Sales/edit/'. $rec->ID); ?>">Edit</a></div>
-						<div class="p-2"><a class="btn btn-danger"  style="width:90px;text-decoration:none;" href="<?php echo site_url('Sales/delete/'. $rec->ID); ?>">Delete</a></div>
-						<?php if($rec->Sale_Invoice_ID === FALSE){
-							echo "<div class='p-2'><a class='btn btn-danger'  style='width:90px;text-decoration:none;' href='" . site_url('Sales/CreateSaleInvoice/'. $rec->ID) . "'>Confirm</a></div>";
-						}
-						else{
-							echo "<div class='ml-auto p-2'><a class='btn btn-info'  style='width:170px;text-decoration:none;' href='" . site_url('Sales/GoToSaleInvoice/'. $rec->Sale_Invoice_ID) . "'>Go To Sale Invoice</a></div>";
-						}
-						?>
+						<div class="p-2"><a class="btn btn-secondary"  style="width:90px;text-decoration:none;" href="<?php echo site_url('PurchaseBill/generateselectedid/'. $rec->ID); ?>">Generate</a></div>
+						<div class="p-2"><a class="btn btn-danger"  style="width:90px;text-decoration:none;" href="<?php echo site_url('PurchaseBill/delete/'. $rec->ID . '/' . $rec->Purchase_ID); ?>">Delete</a></div>
+						<div class="ml-auto p-2"><a class="btn btn-info"  style="width:180px;text-decoration:none;" href="<?php echo site_url('PurchaseBill/GoToPurchaseOrder/'. $rec->Purchase_ID); ?>">Go Back To Purchase</a></div>
 					</div>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col">
-					<?php if($rec->Status === "Quotation"){
-						echo "<h1>Quotation</h1>";
-					}
-					else{
-						echo "<h1>Sale Order</h1>";
-					}
-					?>
-
+					<h1>Purchase Bill</h1>
 					<div class="">
 						<form id="sale_form" method="POST" action="<?php echo site_url('Sales/AddSales'); ?>">
 							<div class="form-group">
-								<input type="text" class="form-control" placeholder="Sales Order ID" value="<?php echo $rec->Sale_Name?>" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;height:80px;font-size:24px; width:50%" readonly>
+								<input type="text" class="form-control" placeholder="Sales Order ID" value="<?php echo $rec->Purchase_Bill_Name?>" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;height:80px;font-size:24px; width:50%" readonly>
 							</div>
 							<div class="form-group">
-								<Label>Customer</label>
-								<input type="text" class="form-control" placeholder="Customer Name" name="customer_name" value="<?php echo $rec->Customer_Name?>" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;width:30% " readonly>
+								<Label>Vendor</label>
+								<input type="text" class="form-control" placeholder="Customer Name" name="customer_name" value="<?php echo $rec->Vendor?>" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;width:30% " readonly>
 							</div>
 							<!-- <h3>Item's Details</h3>
 							<div class="row">
@@ -107,54 +94,30 @@
 									<table id="table_sol" class="table table-sm table-bordered border-dark">
 										<thead>
 											<tr>
-												<th class="d-none" id="SOl_ID">SOL ID</th>
-												<th id="Item_ID">Product</th>
-												<th id="Quantity">Quantity</th>
-												<th id="Price">Price</th>
-												<th id="Discount">Disc(%)</th>
-												<th>Subtotal</th>
+												<th class="d-none" id="SIL_ID">PBL ID</th>
+												<th id="Account_Code">Account Code</th>
+												<th id="Description">Description</th>
+												<th id="Debit">Debit</th>
+												<th id="Credit">Credit</th>
+												<!-- <th>Balance</th> -->
 											</tr>
 										</thead>
 										<tbody>
-												<?php foreach($sale_order_line_record as $reco){
+												<?php foreach($purchase_bill_line_record as $reco){
 													echo "<tr>";
 													echo "<td class='d-none'>" .  $reco->ID . "</td>" ;
-													echo "<td>" . $reco->Item_Name . "</td>" ;
-													echo "<td>" . $reco->Quantity . "</td>" ;
-													echo "<td>" . number_format($reco->Price,2,',','.') . "</td>" ;
-													echo "<td>" . $reco->Discount."</td>" ;
-													echo "<td>" . number_format($reco->Quantity * $reco->Price,2,',','.') ."</td>" ;
+													echo "<td>" . $reco->Account_Codes . " " .$reco->Account_Name . "</td>" ;
+													echo "<td>" . $reco->Description . "</td>" ;
+													echo "<td>" . number_format($reco->Debit,2,',','.') . "</td>" ;
+													echo "<td>" . number_format($reco->Credit,2,',','.')."</td>" ;
+													// echo "<td>" . number_format($reco->Quantity * $reco->Price,2,',','.') ."</td>" ;
 													echo "</tr>";
-													$subtotal += $reco->Quantity * $reco->Price;
-													$dicount_total += ($reco->Quantity * $reco->Price) * $reco->Discount / 100;	
+													// $subtotal += $reco->Quantity * $reco->Price;
+													// $dicount_total += ($reco->Quantity * $reco->Price) * $reco->Discount / 100;	
 												}
-												$sale_total += $subtotal - $dicount_total;?>
+												// $sale_total += $subtotal - $dicount_total;?>
 										</tbody>
 									</table>
-								</div>
-							</div>
-							<div class="row" style="margin-top:10px;">
-								<div class="col">
-									<div class="d-flex flex-row-reverse">
-										<table class="table table-sm table-borderless">
-											<tr>
-												<td rowspan="3"><textarea class="form-control border-top-0 border-right-0 border-left-0 border-bottom border-dark" rows="3" placeholder="Purchase Note" style="resize:none;" readonly></textarea></td>
-												<td class="text-right">Subtotal</td>
-												<td style="width:1%;">:</td>
-												<td id="sale_subtotal"><?php echo number_format($subtotal,2,',','.')  ?></td>
-											</tr>
-											<tr>
-												<td  class="text-right">Discount</td>
-												<td style="width:1%;">:</td>
-												<td id="sale_discount"><?php echo number_format($dicount_total,2,',','.')  ?></td>
-											</tr>
-											<tr>
-												<td  class="text-right"><h5>Sales Total</h5></td>
-												<td style="width:1%;">:</td>
-												<td id="sales_total"><?php echo number_format($sale_total,2,',','.') ?></td>
-											</tr>
-										</table>
-									</div>
 								</div>
 							</div>
 							<!-- <button type="button" onclick="submitForm()" class="btn btn-info btn-lg btn-block" style="margin-top:10px;">Create Sale</button> -->

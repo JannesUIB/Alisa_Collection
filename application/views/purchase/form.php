@@ -18,23 +18,23 @@
 	</style>
 	<body>
 		<nav class="navbar navbar-expand-lg navbar-light" style="background-color:#c1adcc;">
-			<a class="navbar-brand" style="color:white;" href="#">Modules</a>
+			<a class="navbar-brand" style="color:white;" href="<?php echo site_url('Welcome'); ?>">Modules</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
 			<div class="collapse navbar-collapse navv" id="navbarNavDropdown">
 				<ul class="navbar-nav">
 					<li class="nav-item">
-						<a class="nav-link" style="color:white;" href="#">Sales</a>
+						<a class="nav-link" style="color:white;"  href="<?php echo site_url('Sales/index'); ?>">Sales</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" style="color:white;" href="#">Purchase</a>
+						<a class="nav-link" style="color:white;"  href="<?php echo site_url('Purchase/index'); ?>">Purchase</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" style="color:white;" href="#">Inventory</a>
+						<a class="nav-link" style="color:white;"  href="<?php echo site_url('Inventory/index'); ?>">Inventory</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" style="color:white;" href="#">Accounting Reporting</a>
+						<a class="nav-link" style="color:white;"  href="<?php echo site_url('Accounting/index'); ?>">Accounting Reporting</a>
 					</li>
 				</ul>
 			</div>
@@ -50,11 +50,11 @@
 			</div> -->
 			<div class="row">
 				<div class="col">
-					<h1>Purchase Order</h1>
+					<h1>RFQ</h1>
 					<div class="">
 						<form id="purchase_form" method="POST" action="<?php echo site_url('Purchase/AddPurchase'); ?>">
 							<div class="form-group">
-								<input type="text" class="form-control" placeholder="Purchase Order ID" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;height:80px;font-size:24px; width:50%" readonly>
+								<input type="text" class="form-control" name="purchase_name" placeholder="Purchase Order Name" style="border-top:0px solid black;border-right:0px solid black;border-left:0px solid black;height:80px;font-size:24px; width:50%">
 							</div>
 							<div class="form-group">
 								<Label>Vendor</label>

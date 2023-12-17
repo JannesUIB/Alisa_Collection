@@ -40,10 +40,10 @@ class Sales_Invoice_model extends CI_Model {
         // return $this->sale_invoice->get('sale_invoice');
 	}
 	
-    public function deleteSales($id) {
+    public function deleteSalesInvoice($id) {
 		$this->sale_invoice = $this->load->database('default', TRUE);
 		
-		$this->sale_invoice->delete('sale_invoice_line', array('Sale_ID' => $id));
+		$this->sale_invoice->delete('sale_invoice_line', array('Sale_Invoice_ID' => $id));
 		$this->sale_invoice->delete('sale_invoice', array('ID' => $id));
 		// $this->sale_invoice->where('Sale_ID', $id);
 		// $this->sale_invoice->delete('sale_invoice_line');

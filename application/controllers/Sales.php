@@ -23,6 +23,8 @@ class Sales extends CI_Controller {
 		$this->load->model('Sales_model');
 		$this->load->model('Inventory_model');
 		$this->load->model('Sales_Invoice_model');
+		$this->load->model('Stock_Transaction_model');
+		$this->load->model('Notification_model');
     }
 
 	public function index()
@@ -60,15 +62,17 @@ class Sales extends CI_Controller {
 			$sales_order_data = array(
 				'ID' => $id,
 				'Customer' => $sale_order->Customer_Name,
-				'Status' => 'Unpaid',
+				'Sale_Invoice_Name' => "Sale Invoice-" . $sale_order->Sale_Name,
 				'Sale_ID' => $sale_order->ID,
-	
+				'Create_Date' => date("Y-m-d")
 			);
 			$this->Sales_Invoice_model->AddSalesInvoice($sales_order_data);
 		}
 		foreach($sale_data[1]->result() as $sale_order_line){
 			$lastsilId = $this->Sales_Invoice_model->getLastSiLId();
+			$laststId = $this->Stock_Transaction_model->getLaststId();
 			$sil_id = ($lastsilId) ? $lastsilId + 1 : 1;
+			$st_id = ($laststId) ? $laststId + 1 : 1;
 			$sales_order_data = array(
 				'ID' => $sil_id,
 				'Sale_Invoice_ID' => $id,
@@ -76,9 +80,18 @@ class Sales extends CI_Controller {
 				'Description' => $sale_order_line->Item_Name,
 				'Debit' => 0,
 				'Credit' => ($sale_order_line->Quantity * $sale_order_line->Price) - (($sale_order_line->Quantity * $sale_order_line->Price) * $sale_order_line->Discount / 100),
+				'Create_Date' => date("Y-m-d")
+			);
+			$stock_transaction_data = array(
+				'ID' => $st_id,
+				'Item_ID' => $sale_order_line->Item_ID,
+				'Ref' => $sale_order_line->Sale_ID,
+				'Stock_To_Deduce' => $sale_order_line->Quantity,
+				'Stock_To_Add' => 0,
 			);
 			$sol_total += ($sale_order_line->Quantity * $sale_order_line->Price) - (($sale_order_line->Quantity * $sale_order_line->Price) * $sale_order_line->Discount / 100); 
 			$this->Sales_Invoice_model->AddSalesInvoiceLine($sales_order_data);
+			$this->Stock_Transaction_model->addStockTransaction($stock_transaction_data);
 		}
 		$lastsilId = $this->Sales_Invoice_model->getLastSiLId();
 		$sil_id = ($lastsilId) ? $lastsilId + 1 : 1;
@@ -89,8 +102,13 @@ class Sales extends CI_Controller {
 			'Description' => "Total Pendapatan",
 			'Debit' => $sol_total,
 			'Credit' => 0,
+			'Create_Date' => date("Y-m-d")
 		);
 		$this->Sales_Invoice_model->AddSalesInvoiceLine($sales_order_data);
+		$sale_to_update = array(
+			'Status' => 'Sale_Order',
+		);
+		$this->Sales_model->UpdateSales($sale_to_update, $sale_id);
 
 		// $data['inventory_records'] = $inventory_record;
 
@@ -101,6 +119,7 @@ class Sales extends CI_Controller {
 
     public function addSales() {
 		$customer_name = $this->input->post('customer_name');
+		$sale_name = $this->input->post('sale_name');
 		$table_data = $this->input->post('tableData');
 		$sale_subtotal = 0;
 		$sale_discount = 0;
@@ -111,8 +130,9 @@ class Sales extends CI_Controller {
 
 		$data = array(
 			'id' => $id,
+			'Sale_Name' => $sale_name,
 			'Customer_Name' => $customer_name,
-
+			'Create_Date' => date("Y-m-d")
 		);
 
 		$this->Sales_model->addSales($data);
@@ -130,6 +150,7 @@ class Sales extends CI_Controller {
 				'Quantity'=> $row['Quantity'],
 				'Price'=> $row['Price'],
 				'Discount'=> $row['Discount'],
+				'Create_Date' => date("Y-m-d")
 			);
 			$sale_subtotal += $row['Quantity'] * $row['Price'];
 			$sale_discount += ($row['Quantity'] * $row['Price']) * $row['Discount'] / 100;

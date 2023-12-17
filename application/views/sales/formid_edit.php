@@ -9,7 +9,7 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-		<title>Sales</title>
+		<title>Sales | Edit</title>
 	</head>
 	<style>
 		div.row div.col table.table-bordered tr td{
@@ -22,11 +22,39 @@
 		}
 	</style>
 	<body>
+		<nav class="navbar navbar-expand-lg navbar-light" style="background-color:#c1adcc;">
+			<a class="navbar-brand" style="color:white;" href="<?php echo site_url('Welcome'); ?>">Modules</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse navv" id="navbarNavDropdown">
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<a class="nav-link" style="color:white;"  href="<?php echo site_url('Sales/index'); ?>">Sales</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" style="color:white;"  href="<?php echo site_url('Purchase/index'); ?>">Purchase</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" style="color:white;"  href="<?php echo site_url('Inventory/index'); ?>">Inventory</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" style="color:white;"  href="<?php echo site_url('Accounting/index'); ?>">Accounting Reporting</a>
+					</li>
+				</ul>
+			</div>
+		</nav>
 		<?php foreach($sale_record as $rec){?>
 		<div class="container shadow p-3 mb-3 mt-5 bg-white rounded">
 			<div class="row">
 				<div class="col">
-					<h1>Sales Order</h1>
+					<?php if($rec->Status === "Quotation"){
+						echo "<h1>Quotation</h1>";
+					}
+					else{
+						echo "<h1>Sales Order</h1>";
+					}
+					?>
 					<div class="">
 						<form id="sales_form" method="POST" action="<?php echo site_url('Sales/UpdateSales/' . $rec->ID); ?>">
 							<div class="form-group">

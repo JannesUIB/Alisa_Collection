@@ -27,6 +27,17 @@ class Purchase_model extends CI_Model {
 		$this->load->model('Inventory_model', 'inventory');
 
 		$query = $this->purchase_order->get_where('purchase_order', array('ID' => $id));
+		$purchase_bill_query = $this->purchase_order->get_where('purchase_bill', array('Purchase_ID' => $id));
+		if(count($purchase_bill_query->result()) >= 1){
+			foreach($query->result() as $purchase){
+				$purchase->Purchase_Bill_ID = $purchase_bill_query->row()->ID;
+			}
+		}
+		else{
+			foreach($query->result() as $purchase){
+				$purchase->Purchase_Bill_ID = FALSE;
+			}
+		}
 		$secondQuery = $this->purchase_order->get_where('purchase_order_line', array('Purchase_ID' =>$id));
 		foreach($secondQuery->result() as $sol){
 			$item = $this->inventory->GetInventoryBasedOnId($sol->Item_ID)->row();

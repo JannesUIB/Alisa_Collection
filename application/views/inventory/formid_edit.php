@@ -4,7 +4,7 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-		<title>Purchase</title>
+		<title>Inventory | Edit</title>
 	</head>
 	<style>
 		div.row div.col table.table-bordered tr td{
@@ -18,23 +18,23 @@
 	</style>
 	<body>
 		<nav class="navbar navbar-expand-lg navbar-light" style="background-color:#c1adcc;">
-			<a class="navbar-brand" style="color:white;" href="#">Modules</a>
+			<a class="navbar-brand" style="color:white;" href="<?php echo site_url('Welcome'); ?>">Modules</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
 			<div class="collapse navbar-collapse navv" id="navbarNavDropdown">
 				<ul class="navbar-nav">
 					<li class="nav-item">
-						<a class="nav-link" style="color:white;" href="#">Sales</a>
+						<a class="nav-link" style="color:white;"  href="<?php echo site_url('Sales/index'); ?>">Sales</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" style="color:white;" href="#">Purchase</a>
+						<a class="nav-link" style="color:white;"  href="<?php echo site_url('Purchase/index'); ?>">Purchase</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" style="color:white;" href="#">Inventory</a>
+						<a class="nav-link" style="color:white;"  href="<?php echo site_url('Inventory/index'); ?>">Inventory</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" style="color:white;" href="#">Accounting Reporting</a>
+						<a class="nav-link" style="color:white;"  href="<?php echo site_url('Accounting/index'); ?>">Accounting Reporting</a>
 					</li>
 				</ul>
 			</div>
