@@ -139,7 +139,7 @@
                         <li> <a class="waves-effect waves-dark" href="<?php echo site_url('Inventory/index'); ?>" aria-expanded="false"><i
                                     class="fa fa-dropbox"></i><span class="hide-menu">Inventory</span></a>
                         </li>
-                        <li> <a class="waves-effect waves-dark" href="map-google.html" aria-expanded="false"><i
+                        <li> <a class="waves-effect waves-dark" href="<?php echo site_url('Accounting/index'); ?>" aria-expanded="false"><i
                                     class="fa fa-book"></i><span class="hide-menu">Reporting</span></a>
                         </li>
                         <!-- <li> <a class="waves-effect waves-dark" href="pages-blank.html" aria-expanded="false"><i

@@ -21,6 +21,7 @@ class Purchase extends CI_Controller {
 	public function __construct() {
         parent::__construct();
 		$this->load->model('Purchase_model');
+		$this->load->model('Accounting_model');
 		$this->load->model('Stock_Transaction_model');
 		$this->load->model('Inventory_model');
 		$this->load->model('Purchase_Bill_model');
@@ -81,6 +82,11 @@ class Purchase extends CI_Controller {
 			$pol_total += ($purchase_order_line->Quantity * $purchase_order_line->Price) - (($purchase_order_line->Quantity * $purchase_order_line->Price) * $purchase_order_line->Discount / 100); 
 			// $this->Purchase_Bill_model->AddSalesInvoiceLine($sales_order_data);
 			$this->Stock_Transaction_model->addStockTransaction($stock_transaction_data);
+			$result = $this->Inventory_model->GetInventoryBasedOnId($purchase_order_line->Item_ID)->row();
+			$inventory_data = array(
+				'Onhand_Qty' => $result->Onhand_Qty + $purchase_order_line->Quantity,
+			);
+			$this->Inventory_model->UpdateInventory($inventory_data, $purchase_order_line->Item_ID);
 		}
 		$lastpblId = $this->Purchase_Bill_model->getLastPBLId();
 		$pbl_id = ($lastpblId) ? $lastpblId + 1 : 1;
@@ -112,6 +118,19 @@ class Purchase extends CI_Controller {
 		$sale_to_update = array(
 			'Status' => 'Purchase_Order',
 		);
+
+		$result_accounting_debit = $this->Accounting_model->GetAccountCodeBasedOnID(1)->row();
+		$result_accounting_credit = $this->Accounting_model->GetAccountCodeBasedOnID(2)->row();
+
+		$account_code_debit_data = array(
+			'Kredit' => $result_accounting_debit->Kredit + $pol_total,
+		);
+		$account_code_credit_data = array(
+			'Debit' => $result_accounting_credit->Debit + $pol_total,
+		);
+		
+		$this->Accounting_model->UpdateAccountCode($account_code_debit_data, 1);
+		$this->Accounting_model->UpdateAccountCode($account_code_credit_data, 2);
 		$this->Purchase_model->UpdatePurchase($sale_to_update, $purchase_id);
 
 		// $data['inventory_records'] = $inventory_record;

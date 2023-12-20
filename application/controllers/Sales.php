@@ -25,6 +25,7 @@ class Sales extends CI_Controller {
 		$this->load->model('Sales_Invoice_model');
 		$this->load->model('Stock_Transaction_model');
 		$this->load->model('Notification_model');
+		$this->load->model('Accounting_model');
     }
 
 	public function index()
@@ -55,6 +56,8 @@ class Sales extends CI_Controller {
 
 	public function CreateSaleInvoice($sale_id){
 		$sale_data = $this->Sales_model->GetSalesBasedOnId($sale_id);
+		$debit_total = 0;
+		$credit_total = 0;
 		$sol_total = 0;
 		$lastId = $this->Sales_Invoice_model->getLastSalesInvoiceId();
 		$id = ($lastId) ? $lastId + 1 : 1;
@@ -85,13 +88,18 @@ class Sales extends CI_Controller {
 			$stock_transaction_data = array(
 				'ID' => $st_id,
 				'Item_ID' => $sale_order_line->Item_ID,
-				'Ref' => $sale_order_line->Sale_ID,
+				'Ref' => $sale_data[0]->row()->Sale_Name,
 				'Stock_To_Deduce' => $sale_order_line->Quantity,
 				'Stock_To_Add' => 0,
 			);
-			$sol_total += ($sale_order_line->Quantity * $sale_order_line->Price) - (($sale_order_line->Quantity * $sale_order_line->Price) * $sale_order_line->Discount / 100); 
+			$result = $this->Inventory_model->GetInventoryBasedOnId($sale_order_line->Item_ID)->row();
+			$inventory_data = array(
+				'Onhand_Qty' => $result->Onhand_Qty - $sale_order_line->Quantity,
+			);
+			$sol_total += ($sale_order_line->Quantity * $sale_order_line->Price) - (($sale_order_line->Quantity * $sale_order_line->Price) * $sale_order_line->Discount / 100);
 			$this->Sales_Invoice_model->AddSalesInvoiceLine($sales_order_data);
 			$this->Stock_Transaction_model->addStockTransaction($stock_transaction_data);
+			$this->Inventory_model->UpdateInventory($inventory_data, $sale_order_line->Item_ID);
 		}
 		$lastsilId = $this->Sales_Invoice_model->getLastSiLId();
 		$sil_id = ($lastsilId) ? $lastsilId + 1 : 1;
@@ -109,8 +117,19 @@ class Sales extends CI_Controller {
 			'Status' => 'Sale_Order',
 		);
 		$this->Sales_model->UpdateSales($sale_to_update, $sale_id);
-
 		// $data['inventory_records'] = $inventory_record;
+		$result_accounting_debit = $this->Accounting_model->GetAccountCodeBasedOnID(1)->row();
+		$result_accounting_credit = $this->Accounting_model->GetAccountCodeBasedOnID(2)->row();
+
+		$account_code_debit_data = array(
+			'Debit' => $result_accounting_debit->Debit + $sol_total,
+		);
+		$account_code_credit_data = array(
+			'Kredit' => $result_accounting_credit->Credit + $sol_total,
+		);
+		
+		$this->Accounting_model->UpdateAccountCode($account_code_debit_data, 1);
+		$this->Accounting_model->UpdateAccountCode($account_code_credit_data, 2);
 
 		redirect('SalesInvoice/formselectedid/'. $id);
 		// $sol_total += $sale_order_line->Quantity * $sale_order_line->Price;
@@ -154,9 +173,9 @@ class Sales extends CI_Controller {
 			);
 			$sale_subtotal += $row['Quantity'] * $row['Price'];
 			$sale_discount += ($row['Quantity'] * $row['Price']) * $row['Discount'] / 100;
-			$sale_total += $sale_subtotal - $sale_discount;
 			$this->Sales_model->AddSalesOrderLine($sol_data);
 		}
+		$sale_total += $sale_subtotal - $sale_discount;
 		$price_data = array (
 			'Amount_Untaxed' => $sale_subtotal,
 			'Tax' => $sale_discount,

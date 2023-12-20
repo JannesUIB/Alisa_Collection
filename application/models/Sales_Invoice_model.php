@@ -24,6 +24,11 @@ class Sales_Invoice_model extends CI_Model {
         return $this->sale_invoice->get('sale_invoice');
 	}
 
+	public function GetSILBasedOnSIID($si_id){
+		$query = $this->sale_invoice->get_where('sale_invoice_line', array('Sale_Invoice_ID' => $si_id));
+
+		return $query;
+	}
 	public function GetSalesInvoiceBasedOnID($id) {
 		$this->sale_invoice = $this->load->database('default', TRUE);
 		$this->load->model('Inventory_model', 'inventory');
@@ -77,5 +82,32 @@ class Sales_Invoice_model extends CI_Model {
 		$this->sale_invoice->update('sale_invoice', $data);
 
 		return TRUE;
-    }
+	}
+	
+	public function GetSIDataBasedOnDate($start_date, $end_date){
+		$this->load->model('Sales_Invoice_model', 'Sales_invoice');
+		$this->load->model('Inventory_model', 'inventory');
+
+		$query = $this->sale_invoice->get_where('sale_invoice', array(
+			'Create_Date >=' => $start_date,
+			'Create_Date <=' => $end_date
+		));
+
+		foreach($query->result() as $sale_invoice){
+			$sil_array = array();
+			$sales_invoice_line = $this->Sales_invoice->GetSILBasedOnSIID($sale_invoice->ID);
+			foreach($sales_invoice_line->result() as $sil){
+				$account_code = $this->inventory->GetAccountCodeBasedOnID($sil->Account_Code)->row();
+				array_push($sil_array,array(
+					'Account_Name' => $account_code->Account_Name,
+					'Account_Code' => $account_code->Account_Code,
+					'Description' => $sil->Description,
+					'Debit' => $sil->Debit,
+					'Credit' => $sil->Credit,
+				));
+			}
+			$sale_invoice->SIL_records = $sil_array;
+		}
+		return $query;
+	}
 }

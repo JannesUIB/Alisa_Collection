@@ -63,4 +63,37 @@ class Purchase_Bill_model extends CI_Model {
         $result = $query->row_array();
         return $result['id'] ?? 0;
 	}
+
+	public function GetPILBasedOnPIID($pb_id){
+		$query = $this->purchase_bill->get_where('purchase_bill_line', array('Purchase_Bill_ID' => $pb_id));
+
+		return $query;
+	}
+
+	public function GetPIDataBasedOnDate($start_date, $end_date){
+		$this->load->model('Purchase_Bill_model', 'Purchase_bill');
+		$this->load->model('Inventory_model', 'inventory');
+
+		$query = $this->purchase_bill->get_where('purchase_bill', array(
+			'Create_Date >=' => $start_date,
+			'Create_Date <=' => $end_date
+		));
+
+		foreach($query->result() as $purchase_bill){
+			$pil_array = array();
+			$purchase_bill_line = $this->Purchase_bill->GetPILBasedOnPIID($purchase_bill->ID);
+			foreach($purchase_bill_line->result() as $pil){
+				$account_code = $this->inventory->GetAccountCodeBasedOnID($pil->Account_Code)->row();
+				array_push($pil_array,array(
+					'Account_Name' => $account_code->Account_Name,
+					'Account_Code' => $account_code->Account_Code,
+					'Description' => $pil->Description,
+					'Debit' => $pil->Debit,
+					'Credit' => $pil->Credit,
+				));
+			}
+			$purchase_bill->PIL_records = $pil_array;
+		}
+		return $query;
+	}
 }

@@ -24,6 +24,13 @@ class Sales_model extends CI_Model {
         return $this->sale_order->get('sale_order');
 	}
 
+	public function GetSalesOnlyBasedOnId($id) {
+		$this->sale_order = $this->load->database('default', TRUE);
+		$query = $this->sale_order->get_where('sale_order', array('id' => $id));
+
+        return $query;
+	}
+	
 	public function GetSalesBasedOnId($id) {
 		$this->sale_order = $this->load->database('default', TRUE);
 		$this->load->model('Inventory_model', 'inventory');
@@ -49,6 +56,79 @@ class Sales_model extends CI_Model {
 		
         return [$query, $secondQuery];
         // return $this->sale_order->get('sale_order');
+	}
+
+	public function GetDailySalesReport() {
+		$this->sale_order = $this->load->database('default', TRUE);
+		$this->load->model('Sales_model', 'inventory');
+
+		$query = $this->sale_order->get_where('sale_order', array('Create_Date' => date("Y-m-d")));
+		// $sale_invoice_query = $this->sale_order->get_where('sale_invoice', array('Sale_ID' => $id));
+		// if(count($sale_invoice_query->result()) >= 1){
+		// 	foreach($query->result() as $sale){
+		// 		$sale->Sale_Invoice_ID = $sale_invoice_query->row()->ID;
+		// 	}
+		// }
+		// else{
+		// 	foreach($query->result() as $sale){
+		// 		$sale->Sale_Invoice_ID = FALSE;
+		// 	}
+		// }
+		// $secondQuery = $this->sale_order->get_where('sale_order_line', array('Sale_ID' =>$id));
+		// foreach($secondQuery->result() as $sol){
+		// 	$item = $this->inventory->GetInventoryBasedOnId($sol->Item_ID)->row();
+		// 	$sol->Item_Name = $item->Item_Name;
+		// }
+		
+        return $query;
+        // return $this->sale_order->get('sale_order');
+	}
+
+	public function GetMonthlySalesReport() {
+		$this->sale_order = $this->load->database('default', TRUE);
+		$this->load->model('Sales_model', 'inventory');
+
+		// Get the first day of the current month
+		$firstDay = date("Y-m-01");
+
+		// Get the last day of the current month
+		$lastDay = date("Y-m-t");
+
+		// Use the BETWEEN clause in your query
+		$query = $this->sale_order->get_where('sale_order', array(
+			'Create_Date >=' => $firstDay,
+			'Create_Date <=' => $lastDay
+		));
+		
+        return $query;
+        // return $this->sale_order->get('sale_order');
+	}
+
+	public function GetMonthlySalesItemsReport(){
+		$this->sale_order = $this->load->database('default', TRUE);
+		// $this->load->model('Sales_model', 'Sales');
+		$this->load->model('Inventory_model', 'inventory');
+		$this->load->model('Sales_model', 'sales');
+
+
+		// Get the first day of the current month
+		$firstDay = date("Y-m-01");
+
+		// Get the last day of the current month
+		$lastDay = date("Y-m-t");
+
+		// Use the BETWEEN clause in your query
+		$query = $this->sale_order->get_where('sale_order_line', array(
+			'Create_Date >=' => $firstDay,
+			'Create_Date <=' => $lastDay
+		));
+		foreach($query->result() as $sol){
+			$item = $this->inventory->GetInventoryBasedOnId($sol->Item_ID)->row();
+			$sales = $this->sales->GetSalesOnlyBasedOnId($sol->Sale_ID)->row();
+			$sol->Item_Name = $item->Item_Name;
+			$sol->Sales_Ref = $sales->Sale_Name;
+		}
+        return $query;
 	}
 	
     public function deleteSales($id) {
